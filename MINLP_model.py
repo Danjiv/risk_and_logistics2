@@ -9,8 +9,8 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
     Solve the mixed-integer non-linear programming problem for a cut of the robots
     """
 
-    robot_locations = robot_locations_df.to_numpy()
-    range = ranges_df.to_numpy()
+    robot_locations = robot_locations_df
+    range = ranges_df[["range"]].to_numpy()
 
     n_robots = cut_size
     n_stations = cut_size
@@ -124,19 +124,17 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
 
     prob.addConstraint(xp.Sum(x[i, j] for i in robots) <= max_chargers*max_bots_per_charger*o[j] for j in stations)
 
+    # set the distance of each robot from each charging station
+
+    prob.addConstraint(d[i, j] == xp.sqrt((x_coord[j] - robot_locations[robot_locations["index"]==i]["latitude"])^2 + 
+                                         (y_coord[j] - robot_locations[robot_locations["index"]==i]["longitude"])^2)
+                                         for i in robots for j in stations)
     
-    max_chargers = 8
+    # set the y variable - can robot i reach station j
 
-    max_bots_per_charger = 2
+    prob.addConstraint(range[j] - d[i, j] <= range_max*y[i, j] for i in robots for j in stations)
 
-    annual_station_build_cost = 5000
 
-    rescue_robot_cost = 1000
+    # set c, the robot needs rescuing variable
 
-    maintenance_cost_per_charger = 500
-
-    cost_per_km_of_charging = 0.42
-
-    range_min = 10
-
-    range_max = 175
+    prob.addConstraint(x[i, j] - y[i, j] <= c[i, j] for i in robots for j in stations)
