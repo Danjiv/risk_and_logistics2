@@ -76,11 +76,11 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
                   for s in stations], dtype = xp.npvar).reshape(n_stations)
 
     # continous variable - x_coord_j is the x_coordinate of station j
-    x_coord = np.array([prob.addVariable(name = 'x_coord_{0}'.format(s), vartype = xp.continuous)
+    x_coord = np.array([prob.addVariable(name = 'x_coord_{0}'.format(s), vartype = xp.continuous, lb = -xp.infinity)
                        for s in stations], dtype = xp.npvar).reshape(n_stations)
 
     # continuous variable - y_coord_j is the y_coordinate of station j    
-    y_coord = np.array([prob.addVariable(name = 'y_coord_{0}'.format(s), vartype = xp.continuous)
+    y_coord = np.array([prob.addVariable(name = 'y_coord_{0}'.format(s), vartype = xp.continuous, lb = -xp.infinity)
                        for s in stations], dtype = xp.npvar).reshape(n_stations)
     
     # continuous variable - d_ij is the distance of robot i from station j
@@ -158,3 +158,6 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
     print(prob.getSolution(y))
     print(prob.getSolution(c))
     print(prob.getSolution(p))
+    print(prob.getSolution(d))
+    print(prob.getSolution(x_coord))
+    print(prob.getSolution(y_coord))
