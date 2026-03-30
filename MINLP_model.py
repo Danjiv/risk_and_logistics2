@@ -72,7 +72,7 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
     
     # integer variable - p_j = the number of charging points to open at station j
 
-    p = np.array([prob.addVariable(name = 'p_{0}'.format(s), vartype = xp.integer, ub = 8)
+    p = np.array([prob.addVariable(name = 'p_{0}'.format(s), vartype = xp.integer, ub = max_chargers)
                   for s in stations], dtype = xp.npvar).reshape(n_stations)
 
     # continous variable - x_coord_j is the x_coordinate of station j
