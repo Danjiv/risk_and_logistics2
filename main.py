@@ -1,14 +1,16 @@
 import pandas as pd
 import numpy as np
 from preprocessing import read_in_input_data
+from MINLP_model import MINLP_model
+from constants import cut_size
 
 
 def main():
     robot_locations, ranges, ranges_scenarios = read_in_input_data()
 
-    print(robot_locations.shape[0])
-    print(ranges.shape[0])
-    print(ranges_scenarios.shape[0])
+
+    MINLP_model(robot_locations, ranges, cut_size())
+
 
 
 if __name__ == "__main__":
