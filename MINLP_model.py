@@ -72,7 +72,7 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
     
     # integer variable - p_j = the number of charging points to open at station j
 
-    p = np.array([prob.addVariable(name = 'p_{0}'.format(s), vartype = xp.integer)
+    p = np.array([prob.addVariable(name = 'p_{0}'.format(s), vartype = xp.integer, ub = 8)
                   for s in stations], dtype = xp.npvar).reshape(n_stations)
 
     # continous variable - x_coord_j is the x_coordinate of station j
@@ -122,7 +122,7 @@ def MINLP_model(robot_locations_df: pd.DataFrame, ranges_df: pd.DataFrame, cut_s
 
     # number of robots assigned to a charging station cannot exceed the number of available chargers
 
-    prob.addConstraint(xp.Sum(x[i, j] for i in robots) <= max_chargers*max_bots_per_charger*o[j] for j in stations)
+    prob.addConstraint(xp.Sum(x[i, j] for i in robots) <= p[j]*max_bots_per_charger*o[j] for j in stations)
 
     # set the distance of each robot from each charging station
 
